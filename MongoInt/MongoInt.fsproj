@@ -5,7 +5,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Include="Library.fs"/>
+      <Compile Include="Domain.fs" />
+      <Compile Include="IO.fs" />
+      <Compile Include="CollectionController.fs" />
+      <Compile Include="MongoEntityFactory.fs" />
+      <Compile Include="MongoQueue.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="MongoDB.Driver" Version="2.11.3" />
+      <PackageReference Include="MongoDB.FSharp" Version="0.1.0" />
     </ItemGroup>
 
 </Project>
