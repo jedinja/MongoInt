@@ -22,3 +22,7 @@ let defaultConfig = {
     ConnectionString = "mongodb://localhost:27017"
     DbName = ""
 }
+
+let RegisterFSharpTypes () =
+    NamelessInteractive.FSharp.MongoDB.SerializationProviderModule.Register()
+    NamelessInteractive.FSharp.MongoDB.Conventions.ConventionsModule.Register()

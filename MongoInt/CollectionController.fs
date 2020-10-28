@@ -2,6 +2,7 @@ module MongoInt.CollectionController
 
 open System
 open MongoDB.Bson
+open MongoDB.Bson.Serialization
 open MongoDB.Driver
 open MongoInt.IO
 
@@ -15,6 +16,18 @@ let private emptyFilter () = filt().Empty
 let private asc field = SortDefinitionBuilder().Ascending(stringField field)
 let private getPage (page: Page) (query: IFindFluent<BsonDocument, BsonDocument>) = query.Skip(Nullable<int>((fst page - 1) * snd page)).Limit(Nullable<int>(snd page))
 let private getId (ent: BsonDocument) = (ent.Item(ID).AsObjectId).ToString()
+let private fromBsonToUpdate<'a> obj =
+
+    let changes = serialize<'a> obj
+
+    let firstValue = changes |> Seq.head
+    let upd = Builders<BsonDocument>.Update.Set (StringFieldDefinition<BsonDocument,BsonValue> firstValue.Name, firstValue.Value)
+
+    changes.Elements
+    |> Seq.tail
+    |> Seq.fold
+        (fun (state: UpdateDefinition<BsonDocument>) elem -> state.Set (StringFieldDefinition<BsonDocument,BsonValue> elem.Name, elem.Value))
+        upd
 
 let internal loadFromCollection<'a> config col id =
     let client = getClient<BsonDocument> config col
@@ -47,9 +60,10 @@ let internal createRecordInCollection<'a> config col item =
 let internal updateRecordInCollection<'a, 'b> config col id item =
     let client = getClient<BsonDocument> config col
     let filter = filt().Eq(stringFieldF ID, id |> toBsonId)
-    let upd = BsonDocumentUpdateDefinition(serialize<'b> item)
+    //let upd = BsonDocumentUpdateDefinition(serialize<'b> item)
+    let upd = fromBsonToUpdate<'b> item
 
-    client.FindOneAndUpdate(filter, upd) |> ignore
+    client.UpdateOne(filter, upd) |> ignore
 
     item |>
     MongoCarrier.from id

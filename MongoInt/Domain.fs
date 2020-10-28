@@ -22,5 +22,7 @@ module MongoCarrier =
         Record = record
     }
 
+    let getId carrier = carrier.Id
+
 module Page =
     let next (page: Page) = (fst page + 1, snd page)
