@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\ImproveApi\ImproveApi.fsproj" />
       <ProjectReference Include="..\MongoInt\MongoInt.fsproj" />
     </ItemGroup>
 

@@ -6,6 +6,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "MongoInt", "MongoInt\MongoI
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NamelessInteractive", "NamelessInteractive\NamelessInteractive.fsproj", "{3A4F59BC-B860-4B7F-8ECB-D7A59BC5B769}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ImproveApi", "ImproveApi\ImproveApi.fsproj", "{AD2A8B47-1BE7-4D21-97E4-6BA3B8CD66F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{3A4F59BC-B860-4B7F-8ECB-D7A59BC5B769}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A4F59BC-B860-4B7F-8ECB-D7A59BC5B769}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A4F59BC-B860-4B7F-8ECB-D7A59BC5B769}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD2A8B47-1BE7-4D21-97E4-6BA3B8CD66F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD2A8B47-1BE7-4D21-97E4-6BA3B8CD66F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD2A8B47-1BE7-4D21-97E4-6BA3B8CD66F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD2A8B47-1BE7-4D21-97E4-6BA3B8CD66F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

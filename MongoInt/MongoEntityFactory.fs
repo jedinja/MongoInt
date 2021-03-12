@@ -18,7 +18,7 @@ type Factory (config) =
     member this.Config = config
     member this.CreateEntity<'a> (col: CollectionName) = Entity<'a>(col, this.Config)
 
-let defaultConfig = {
+let defaultMongoConfig = {
     ConnectionString = "mongodb://localhost:27017"
     DbName = ""
 }

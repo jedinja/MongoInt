@@ -25,13 +25,13 @@ type UnionObj = {
 type StringLog = {
     Error: string
 }
-
+open ImproveApi.Token
 [<EntryPoint>]
 let main argv =
 
     RegisterFSharpTypes()
 
-    let fac = Factory { defaultConfig with DbName = "play" }
+    let fac = Factory { defaultMongoConfig with DbName = "play" }
     let me = fac.CreateEntity<Me> "me"
 
     "5f89a0e7c38d9a2d8a335adf"
