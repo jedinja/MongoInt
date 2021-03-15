@@ -8,7 +8,7 @@ open Suave.Operators
 open FSharp.Data
 open Suave.Logging
 open MongoInt.MongoEntityFactory
-open Token
+open Ops
 
 type Config = JsonProvider<""" { "port":1, "ip":"127.0.0.1", "verbose":true, "conn":"string", "db":"string" } """>
 let config = Config.Parse """ { "port":3010, "ip":"127.0.0.1", "verbose": true, "conn": "mongodb://localhost:27017", "db": "improve" } """
@@ -34,28 +34,22 @@ let logLevel (config: Config.Root) =
 
 let logger file = Targets.create (logLevel file) [||]
 
-let app configFile factory =
-    choose [
-        pathStarts "/ok" >=> choose [
-            GET >=> (Successful.OK """ { "ok": "OK2" } """)
-        ]
-        choose [
+let mime_json = Writers.setMimeType "application/json; charset=utf-8"
 
-        ] >=> Writers.setMimeType "application/json; charset=utf-8"
+let app configFile db =
+    choose [
+        mime_json <=< choose [
+            pathStarts "/login" >=> POST >=> LoginController.login db
+            pathStarts "/sign-up" >=> POST >=> UserController.create db
+            LoginController.LOGGED_IN >=> choose [
+
+            ]
+        ]
         NOT_FOUND "NOT FOUND"
     ] >=> logStructured (logger configFile) logFormatStructured
 
 [<EntryPoint>]
 let main argv =
-
-    let token = buildToken "asd"
-    printfn "built %s" token
-
-    let id = validateAndGetUserId token
-    printfn "decoded %s" id
-
-
-
 
 //    let confFile = getConfigFile "./config.json"
 //    let factory = Factory (getMongoCfg confFile)

@@ -1,13 +1,12 @@
 module ImproveApi.LoginController
 
 open BCrypt.Net
-open ImproveApi.Domain
-open ImproveApi.Models
+open Domain
+open Models
+open Combinators
 open MongoInt.MongoEntityFactory
 
 open Suave
-open Suave.Filters
-open Suave.Operators
 
 let private verifyPass (model: Entity<User>) (user: UserForLogin) =
     let dbUserOpt = model.all { Name = user.Name } |> List.tryHead
@@ -15,7 +14,7 @@ let private verifyPass (model: Entity<User>) (user: UserForLogin) =
     | None -> Mid.BAD
     | Some dbUser ->
         match BCrypt.EnhancedVerify(user.Password, dbUser.Record.Password) with
-        | true -> { Token = "asd" } |> Mid.JSON
+        | true -> { Token = Token.Build dbUser.Id } |> Mid.JSON
         | false -> Mid.BAD
 
 let private loginUser (model: Entity<User>) =
@@ -23,11 +22,17 @@ let private loginUser (model: Entity<User>) =
     Mid.FromJSON<UserForLogin> >>
     verifyPass model
 
-let login factory =
+let login :Factory->WebPart = getUserModel >> loginUser >> request
 
-    let UserModel = getUserModel factory
-    let login = loginUser UserModel
+let SESSION_USER = "userId"
 
-    choose [
-        POST >=> request login
-    ]
+let LOGGED_IN =
+    requestHeader
+        "Authorization"
+        (fun token -> match Token.ValidateAndGetUserId token with
+                        | Some userId -> Mid.setSessionValue SESSION_USER userId
+                        | _ -> never)
+
+let withUser = withSession SESSION_USER
+
+

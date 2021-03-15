@@ -7,41 +7,35 @@ open System.Security.Claims
 open System.Text
 open Microsoft.IdentityModel.Tokens
 
-let buildToken id =
-    printfn "0"
-    let issuer = "improve.api"
+let private secretKey = "VerySecretKeyase23423dq3ew3e23e23ewdqwerqw3akukuruku"
+let private signingKey = SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey))
+let private expiresHours = 8
+let private issuer = "improve.api"
+let private audience = "improve.api"
+
+let Build id =
     let claims = [
         Claim(JwtRegisteredClaimNames.Sub, id, ClaimValueTypes.String, issuer);
     ]
 
-    printfn "1"
-
-    let secretKey = "VerySecretKeyase23423dq3ew3e23e23ewdqwerqw3akukuruku"
-    let signingKey = SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey))
-    let expiresHours = 8
     let (now: Nullable<DateTime>) =  Nullable<DateTime>(DateTime.UtcNow)
     let expireTime = Nullable<DateTime>(now.Value.Add(TimeSpan(0, expiresHours, 0, 0)))
-    let jwt = JwtSecurityToken(issuer, "improve.api", claims, now, expireTime, SigningCredentials(signingKey, SecurityAlgorithms.HmacSha384 ))
-    printfn "2"
+    let jwt = JwtSecurityToken(issuer, audience, claims, now, expireTime, SigningCredentials(signingKey, SecurityAlgorithms.HmacSha384 ))
+
+    JwtSecurityTokenHandler().WriteToken(jwt)
+
+let ValidateAndGetUserId (token:string) =
     let jwtSecurityTokenHandler = JwtSecurityTokenHandler()
-
-    printfn "3"
-    let encodedJwt = jwtSecurityTokenHandler.WriteToken(jwt)
-    printfn "4"
-    encodedJwt
-
-let validateAndGetUserId (token:string) =
-    let jwtSecurityTokenHandler = JwtSecurityTokenHandler()
-
-    let secretKey = "VerySecretKeyase23423dq3ew3e23e23ewdqwerqw3akukuruku"
-    let signingKey = SymmetricSecurityKey(Encoding.ASCII.GetBytes(secretKey))
 
     let pars = TokenValidationParameters()
     pars.IssuerSigningKey <- signingKey
-    pars.ValidAudience <- "improve.api"
-    pars.ValidIssuer <- "improve.api"
+    pars.ValidAudience <- issuer
+    pars.ValidIssuer <- audience
 
-    let (_, secToken) = jwtSecurityTokenHandler.ValidateToken(token, pars)
+    try
+        let (_, secToken) = jwtSecurityTokenHandler.ValidateToken(token, pars)
 
-    let jwtToken = secToken :?> JwtSecurityToken
-    jwtToken.Subject
+        let jwtToken = secToken :?> JwtSecurityToken
+        Some jwtToken.Subject
+    with
+        | _ -> None
