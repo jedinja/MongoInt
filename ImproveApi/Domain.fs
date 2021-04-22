@@ -17,7 +17,7 @@ type UserFilterByName = {
     Name: string
 }
 
-type AuthenticnToken = {
+type AuthenticationToken = {
     Token: string
 }
 

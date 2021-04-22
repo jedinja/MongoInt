@@ -29,8 +29,8 @@ let ValidateAndGetUserId (token:string) =
 
     let pars = TokenValidationParameters()
     pars.IssuerSigningKey <- signingKey
-    pars.ValidAudience <- issuer
-    pars.ValidIssuer <- audience
+    pars.ValidAudience <- audience
+    pars.ValidIssuer <- issuer
 
     try
         let (_, secToken) = jwtSecurityTokenHandler.ValidateToken(token, pars)
